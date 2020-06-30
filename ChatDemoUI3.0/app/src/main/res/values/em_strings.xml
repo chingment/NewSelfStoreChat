@@ -83,6 +83,7 @@
     <string name="em_user_remove">This user has been removed</string>
     <string name="user_forbidden">User is forbidden by server</string>
     <string name="set">Settings</string>
+    <string name="my">My</string>
     <string name="notify">New message notification</string>
     <string name="newnotify">Receiving a new message</string>
     <string name="voice">Sounds</string>

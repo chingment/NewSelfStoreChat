@@ -88,13 +88,20 @@
             android:visibility="gone"
             />
 
-        <Button
+        <ImageView
             android:id="@+id/btn_switch_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/switch_camera"
             android:layout_below="@id/btn_record_video"
-            />
+            android:src="@drawable/icon_switchcamera" />
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_switch_camera"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/switch_camera"-->
+<!--            android:layout_below="@id/btn_record_video"-->
+<!--            />-->
         <!--     <Button
             android:layout_marginTop="3dp"
             android:id="@+id/btn_toggle_video_stream"
@@ -133,6 +140,33 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="18dp" >
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="DisableBaselineAlignment">
+
+                    <GridView
+                        android:id="@+id/custom_list_skus"
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:background="#ffffff"
+                        android:columnWidth="100dp"
+                        android:fadingEdge="none"
+                        android:gravity="center"
+                        android:horizontalSpacing="0dp"
+                        android:listSelector="#ffffff"
+                        android:numColumns="3"
+                        android:overScrollMode="never"
+                        android:scrollbars="none"
+                        android:stretchMode="columnWidth"
+                        android:layout_marginBottom="0dp"
+                        android:verticalSpacing="0dp" />
+
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/ll_voice_control"

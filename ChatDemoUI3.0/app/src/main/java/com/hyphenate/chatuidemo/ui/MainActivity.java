@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity {
 
 	private Button[] mTabs;
 	private ContactListFragment contactListFragment;
-    private SettingsFragment settingFragment;
+    private MyFragment myFragment;
 	private Fragment[] fragments;
 	private int index;
 	private int currentTabIndex;
@@ -142,22 +142,22 @@ public class MainActivity extends BaseActivity {
 		    EMLog.d(TAG, "get fragments from saveInstanceState");
 		    conversationListFragment = (ConversationListFragment) getSupportFragmentManager().getFragment(savedInstanceState, ConversationListFragment.class.getSimpleName());
 		    contactListFragment = (ContactListFragment) getSupportFragmentManager().getFragment(savedInstanceState, ContactListFragment.class.getSimpleName());
-            settingFragment = (SettingsFragment) getSupportFragmentManager().getFragment(savedInstanceState, SettingsFragment.class.getSimpleName());
-            fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+			myFragment = (MyFragment) getSupportFragmentManager().getFragment(savedInstanceState, MyFragment.class.getSimpleName());
+            fragments = new Fragment[]{conversationListFragment, contactListFragment, myFragment};
             getSupportFragmentManager().beginTransaction()
                     .show(conversationListFragment)
                     .hide(contactListFragment)
-                    .hide(settingFragment)
+                    .hide(myFragment)
                     .commit();
         } else {
             conversationListFragment = new ConversationListFragment();
             contactListFragment = new ContactListFragment();
-            settingFragment = new SettingsFragment();
-            fragments = new Fragment[]{conversationListFragment, contactListFragment, settingFragment};
+			myFragment = new MyFragment();
+            fragments = new Fragment[]{conversationListFragment, contactListFragment, myFragment};
 
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, conversationListFragment)
                     .add(R.id.fragment_container, contactListFragment).hide(contactListFragment)
-                    .add(R.id.fragment_container, settingFragment).hide(settingFragment)
+                    .add(R.id.fragment_container, myFragment).hide(myFragment)
                     .show(conversationListFragment)
                     .commit();
         }

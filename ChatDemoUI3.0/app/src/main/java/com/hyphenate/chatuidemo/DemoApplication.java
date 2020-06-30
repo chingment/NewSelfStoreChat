@@ -48,6 +48,8 @@ public class DemoApplication extends Application {
         applicationContext = this;
         instance = this;
 
+
+
 		String languageToLoad  = "zh";
 		Locale locale = new Locale(languageToLoad);
 		Locale.setDefault(locale);
