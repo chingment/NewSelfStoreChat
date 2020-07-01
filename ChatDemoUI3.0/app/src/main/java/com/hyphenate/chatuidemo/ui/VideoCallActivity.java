@@ -224,6 +224,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                     streamID = playMakeCallSounds();
                 }
             }, 300);
+
         } else { // incoming call
 
             callStateTextView.setText("对方请求接听");
