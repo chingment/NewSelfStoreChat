@@ -101,8 +101,9 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
 
 
 
+    private LinearLayout custom_ll;
     private GridView custom_list_skus;
-
+    private TextView custom_store_name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,6 +142,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
         netwrokStatusVeiw = (TextView) findViewById(R.id.tv_network_status);
         ImageView switchCameraBtn = (ImageView) findViewById(R.id.btn_switch_camera);
 
+        custom_ll=(LinearLayout) findViewById(R.id.custom_ll);
+        custom_store_name=(TextView) findViewById(R.id.custom_store_name);
         custom_list_skus=(GridView) findViewById(R.id.custom_list_skus);
         custom_list_skus.setFocusable(false);
         custom_list_skus.setClickable(false);
@@ -160,7 +163,6 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
         nickTextView.setText(username);
 
 
-
        // String s="{\"type\":\"buyinfo\",\"content\":{\"machineId\":\"202004220011\",\"storeName\":\"暨南大学金陵广场\",\"skus\":[{\"id\":\"52c8df75614947fb9240a722060a719f\",\"name\":\"格力高百醇（巧克力味）\",\"mainImgUrl\":\"http:\\/\\/file.17fanju.com\\/Upload\\/product\\/0ee9551d-6968-4cda-97da-16e31109a893_B.jpg\",\"quantity\":1},{\"id\":\"da8050984c224253a7ce721f55924fcb\",\"name\":\"悠哈UHA味觉软糖（葡萄味）\",\"mainImgUrl\":\"http:\\/\\/file.17fanju.com\\/Upload\\/product\\/e0e9dedf-4376-4784-bd63-345b9b58452e_B.jpg\",\"quantity\":1},{\"id\":\"54e642ac2be9419b9bc397b2f15b51b4\",\"name\":\"雀巢咖啡香滑即饮罐装 规格\",\"mainImgUrl\":\"http:\\/\\/file.17fanju.com\\/Upload\\/product\\/b102956f-a9b2-40c4-af3b-b68859fa10fd_B.jpg\",\"quantity\":1}]}}";
 
         Log.i(TAG,"callExt2:"+ex_message);
@@ -173,6 +175,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                 if (rt != null) {
                     MsgContetByBuyInfo buyInfo = rt.getContent();
                     if (buyInfo != null) {
+                         custom_ll.setVisibility(View.VISIBLE);
+                         custom_store_name.setText(buyInfo.getStoreName());
                         if (buyInfo.getSkus() != null) {
                             ProductSkuAdapter productKindSkuAdapter = new ProductSkuAdapter(this, rt.getContent().getSkus());
                             custom_list_skus.setAdapter(productKindSkuAdapter);
@@ -222,7 +226,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
             }, 300);
         } else { // incoming call
 
-            callStateTextView.setText("Ringing");
+            callStateTextView.setText("对方请求接听");
             if(EMClient.getInstance().callManager().getCallState() == EMCallStateChangeListener.CallState.IDLE
                     || EMClient.getInstance().callManager().getCallState() == EMCallStateChangeListener.CallState.DISCONNECTED) {
                 // the call has ended
@@ -231,11 +235,13 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
             }
             voiceContronlLayout.setVisibility(View.INVISIBLE);
             localSurface.setVisibility(View.INVISIBLE);
-            Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            audioManager.setMode(AudioManager.MODE_RINGTONE);
-            audioManager.setSpeakerphoneOn(true);
-            ringtone = RingtoneManager.getRingtone(this, ringUri);
-            ringtone.play();
+            if(audioManager!=null) {
+                Uri ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                audioManager.setMode(AudioManager.MODE_RINGTONE);
+                audioManager.setSpeakerphoneOn(true);
+                ringtone = RingtoneManager.getRingtone(this, ringUri);
+                ringtone.play();
+            }
             EMClient.getInstance().callManager().setSurfaceView(localSurface, oppositeSurface);
         }
 

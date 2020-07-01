@@ -72,7 +72,8 @@ public class CallActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
+       // audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
         pushProvider = new EMCallManager.EMCallPushProvider() {
             
@@ -138,8 +139,10 @@ public class CallActivity extends BaseActivity {
             soundPool.release();
         if (ringtone != null && ringtone.isPlaying())
             ringtone.stop();
-        audioManager.setMode(AudioManager.MODE_NORMAL);
-        audioManager.setMicrophoneMute(false);
+        if(audioManager!=null) {
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+            audioManager.setMicrophoneMute(false);
+        }
         
         if(callStateListener != null)
             EMClient.getInstance().callManager().removeCallStateChangeListener(callStateListener);
@@ -306,8 +309,11 @@ public class CallActivity extends BaseActivity {
      */
     protected int playMakeCallSounds() {
         try {
-            audioManager.setMode(AudioManager.MODE_RINGTONE);
-            audioManager.setSpeakerphoneOn(true);
+
+            if(audioManager!=null) {
+                audioManager.setMode(AudioManager.MODE_RINGTONE);
+                audioManager.setSpeakerphoneOn(true);
+            }
 
             // play
             int id = soundPool.play(outgoing, // sound resource
@@ -324,9 +330,11 @@ public class CallActivity extends BaseActivity {
 
     protected void openSpeakerOn() {
         try {
-            if (!audioManager.isSpeakerphoneOn())
-                audioManager.setSpeakerphoneOn(true);
-            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            if(audioManager!=null) {
+                if (!audioManager.isSpeakerphoneOn())
+                    audioManager.setSpeakerphoneOn(true);
+                audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -357,7 +365,7 @@ public class CallActivity extends BaseActivity {
     protected void saveCallRecord() {
         @SuppressWarnings("UnusedAssignment") EMMessage message = null;
         @SuppressWarnings("UnusedAssignment") EMTextMessageBody txtBody = null;
-        if (!isInComingCall) { // outgoing call
+        if (isInComingCall) { // outgoing call
             message = EMMessage.createSendMessage(EMMessage.Type.TXT);
             message.setTo(username);
         } else {
