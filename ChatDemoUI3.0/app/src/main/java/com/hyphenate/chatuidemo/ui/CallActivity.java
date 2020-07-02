@@ -60,6 +60,7 @@ public class CallActivity extends BaseActivity {
     
     EMCallManager.EMCallPushProvider pushProvider;
 
+
     private Bitmap watermarkbitmap;
     private EMWaterMarkOption watermark;
     private EMWaterMarkOption wmOption;
@@ -365,6 +366,7 @@ public class CallActivity extends BaseActivity {
     protected void saveCallRecord() {
         @SuppressWarnings("UnusedAssignment") EMMessage message = null;
         @SuppressWarnings("UnusedAssignment") EMTextMessageBody txtBody = null;
+
         if (isInComingCall) { // outgoing call
             message = EMMessage.createSendMessage(EMMessage.Type.TXT);
             message.setTo(username);
@@ -431,6 +433,7 @@ public class CallActivity extends BaseActivity {
         message.setStatus(Status.SUCCESS);
 
         // save
+
         EMClient.getInstance().chatManager().saveMessage(message);
     }
 

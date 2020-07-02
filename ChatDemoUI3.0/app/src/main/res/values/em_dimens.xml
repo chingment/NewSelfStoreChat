@@ -122,7 +122,8 @@
     <dimen name="adaptive_97dp">81dp</dimen>
     <dimen name="adaptive_98dp">82dp</dimen>
     <dimen name="adaptive_99dp">83dp</dimen>
-
+    <dimen name="adaptive_200dp">184dp</dimen>
+    <dimen name="adaptive_400dp">384dp</dimen>
     <dimen name="adaptive_10sp">8sp</dimen>
     <dimen name="adaptive_11sp">9sp</dimen>
     <dimen name="adaptive_12sp">10sp</dimen>
