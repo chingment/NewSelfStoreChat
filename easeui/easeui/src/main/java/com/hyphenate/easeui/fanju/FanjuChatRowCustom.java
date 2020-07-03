@@ -1,4 +1,4 @@
-package com.hyphenate.easeui.widget.chatrow;
+package com.hyphenate.easeui.fanju;
 
 import android.content.Context;
 import android.text.Spannable;
@@ -8,10 +8,10 @@ import android.widget.TextView;
 
 import com.hyphenate.chat.EMCustomMessageBody;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.model.EaseDingMessageHelper;
 import com.hyphenate.easeui.utils.EaseSmileUtils;
+import com.hyphenate.easeui.widget.chatrow.EaseChatRow;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class UplinkChatRowOrder extends EaseChatRow{
 
     @Override
     public void onSetUpView() {
-        //todo  本地
+        //todo 本地
         EMCustomMessageBody txtBody = (EMCustomMessageBody) message.getBody();
 
         //EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();

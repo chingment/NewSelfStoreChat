@@ -10,7 +10,6 @@ import com.hyphenate.easeui.model.EaseDingMessageHelper;
 import com.hyphenate.easeui.ui.EaseDingAckUserListActivity;
 import com.hyphenate.easeui.widget.chatrow.EaseChatRow;
 import com.hyphenate.easeui.widget.chatrow.EaseChatRowText;
-import com.hyphenate.easeui.widget.chatrow.UplinkChatRowOrder;
 import com.hyphenate.exceptions.HyphenateException;
 
 public class UplinkChatOrderPresenter extends EaseChatRowPresenter {

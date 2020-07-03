@@ -32,7 +32,6 @@ import android.widget.Chronometer;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,16 +40,19 @@ import com.alibaba.fastjson.TypeReference;
 import com.hyphenate.chat.EMCallSession;
 import com.hyphenate.chat.EMCallStateChangeListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMCustomMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMVideoCallHelper;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
-import com.hyphenate.chatuidemo.fanju.model.CustomMsg;
-import com.hyphenate.chatuidemo.fanju.model.MsgContetByBuyInfo;
-import com.hyphenate.chatuidemo.fanju.ui.ProductSkuAdapter;
 import com.hyphenate.chatuidemo.utils.PhoneStateManager;
 import com.hyphenate.chatuidemo.utils.PreferenceManager;
+import com.hyphenate.easeui.fanju.ProductSkuAdapter;
+import com.hyphenate.easeui.fanju.model.CustomMsg;
+import com.hyphenate.easeui.fanju.model.ProductSkuBean;
+import com.hyphenate.easeui.fanju.model.MsgContentByBuyInfo;
+import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.media.EMCallSurfaceView;
 import com.hyphenate.util.EMLog;
@@ -59,6 +61,7 @@ import com.hyphenate.chat.EMWaterMarkPosition;
 import com.superrtc.sdk.VideoView;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -105,7 +108,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
     private Button buyinfo_btn_butongyi;
     private Button buyinfo_btn_tongyi;
 
-    private String bizFlowType;
+    private String customMsg_Type;
+    private CustomMsg<MsgContentByBuyInfo> customMsg_BuyInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,12 +178,13 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
 
         if(ex_message!=null) {
             if (ex_message.contains("\"type\":\"buyinfo\"")) {
-                CustomMsg<MsgContetByBuyInfo> rt = JSON.parseObject(ex_message, new TypeReference<CustomMsg<MsgContetByBuyInfo>>() {
+                CustomMsg<MsgContentByBuyInfo> rt = JSON.parseObject(ex_message, new TypeReference<CustomMsg<MsgContentByBuyInfo>>() {
                 });
                 if (rt != null) {
-                    MsgContetByBuyInfo buyInfo = rt.getContent();
+                    MsgContentByBuyInfo buyInfo = rt.getContent();
                     if (buyInfo != null) {
-                        bizFlowType = rt.getType();
+                        customMsg_Type = rt.getType();
+                        customMsg_BuyInfo=rt;
                         buyinfo_ll_info.setVisibility(View.VISIBLE);
                         buyinfo_tv_storename.setText(buyInfo.getStoreName());
                         if (buyInfo.getSkus() != null) {
@@ -407,7 +412,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
 
                                     saveCallRecord();
                                     if(isInCalling){
-                                        if(bizFlowType.equals("buyinfo")){
+                                        if(customMsg_Type.equals("buyinfo")){
                                             call_btn_hangup.setVisibility(View.GONE);
                                             call_coming_ll.setVisibility(View.GONE);
                                             buyinfo_ll_btns.setVisibility(View.VISIBLE);
@@ -586,6 +591,25 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                 call_tv_state.setText(getResources().getString(R.string.hanging_up));
                 EMLog.d(TAG, "btn_hangup_call");
                 handler.sendEmptyMessage(MSG_CALL_END);
+
+//                if(customMsg_BuyInfo==null){
+//                    customMsg_BuyInfo=new CustomMsg<>();
+//                    customMsg_BuyInfo.setType("buyinfo");
+//
+//                    MsgContentByBuyInfo buyInfo=new MsgContentByBuyInfo();
+//                    buyInfo.setMachineId("112122313");
+//                    buyInfo.setStoreName("店铺名称");
+//                    buyInfo.setHandleStatus(1);
+//                    buyInfo.setHandleDescribe("同意");
+//                    buyInfo.setOperateUserName("chingment");
+//
+//                    customMsg_BuyInfo.setContent(buyInfo);
+//                }
+//
+//                EMMessage message3 = createCustomSendMessage(customMsg_BuyInfo, username);
+//                EMClient.getInstance().chatManager().sendMessage(message3);
+
+
                 break;
             case R.id.iv_mute: // mute
                 if (isMuteState) {
@@ -624,24 +648,41 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                 handler.sendEmptyMessage(MSG_CALL_SWITCH_CAMERA);
                 break;
             case R.id.buyinfo_btn_tongyi:
-                EMMessage message = EMMessage.createSendMessage(EMMessage.Type.TXT);
-                EMTextMessageBody txtBody = new EMTextMessageBody("同意");
-                message.setTo(username);
-                message.addBody(txtBody);
-                message.setMsgId(msgid);
-                message.setStatus(EMMessage.Status.INPROGRESS);
-                EMClient.getInstance().chatManager().sendMessage(message);
-                finish();
+
+                new EaseAlertDialog(VideoCallActivity.this,null, "确定同意？", null,new EaseAlertDialog.AlertDialogUser() {
+
+                    @Override
+                    public void onResult(boolean confirmed, Bundle bundle) {
+                        if(confirmed){
+                            if(customMsg_BuyInfo!=null) {
+                                customMsg_BuyInfo.getContent().setHandleStatus(1);
+                                customMsg_BuyInfo.getContent().setHandleDescribe("同意");
+                                sendCustomMessage(customMsg_BuyInfo, username);
+                            }
+                            finish();
+                        }
+                    }
+                }, true).show();
+
+
                 break;
             case R.id.buyinfo_btn_butongyi:
-                EMMessage message2 = EMMessage.createSendMessage(EMMessage.Type.TXT);
-                EMTextMessageBody txtBody2 = new EMTextMessageBody("不同意");
-                message2.setTo(username);
-                message2.addBody(txtBody2);
-                message2.setMsgId(msgid);
-                message2.setStatus(EMMessage.Status.INPROGRESS);
-                EMClient.getInstance().chatManager().sendMessage(message2);
-                finish();
+
+                new EaseAlertDialog(VideoCallActivity.this,null, "确定不同意？", null,new EaseAlertDialog.AlertDialogUser() {
+
+                    @Override
+                    public void onResult(boolean confirmed, Bundle bundle) {
+                        if(confirmed){
+                            if(customMsg_BuyInfo!=null) {
+                                customMsg_BuyInfo.getContent().setHandleStatus(2);
+                                customMsg_BuyInfo.getContent().setHandleDescribe("不同意");
+                                sendCustomMessage(customMsg_BuyInfo, username);
+                            }
+                            finish();
+                        }
+                    }
+                }, true).show();
+
                 break;
             default:
                 break;
@@ -732,5 +773,30 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
             }
         }
     }
+
+    //todo 本地->测试自定义格式
+    public void sendCustomMessage(CustomMsg<MsgContentByBuyInfo>  var0, String var1) {
+        if (var0!=null) {
+
+            EMMessage message = EMMessage.createSendMessage(EMMessage.Type.CUSTOM);
+
+            EMCustomMessageBody var3 = new EMCustomMessageBody(JSON.toJSONString(var0));
+
+            var3.setEvent(var0.getType());
+
+            HashMap<String,String> params=new HashMap<>();
+
+            params.put("type",var0.getType());
+            params.put("content",JSON.toJSONString(var0.getContent()));
+
+            var3.setParams(params);
+
+            message.addBody(var3);
+            message.setTo(var1);
+
+            EMClient.getInstance().chatManager().sendMessage(message);
+        }
+    }
+
 
 }

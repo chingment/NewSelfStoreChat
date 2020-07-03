@@ -43,7 +43,7 @@ public class CallReceiver extends BroadcastReceiver{
         //call type
         String type = intent.getStringExtra("type");
 
-        //todo 本地
+        //todo 本地->接收呼叫扩展内容
         String callExt = EMClient.getInstance().callManager().getCurrentCallSession().getExt();
 
         Log.e("CallReceiver", "callExt1:" + callExt);
