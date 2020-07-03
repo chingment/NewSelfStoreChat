@@ -126,10 +126,17 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     static final int ITEM_PICTURE = 2;
     static final int ITEM_LOCATION = 3;
     
-    protected int[] itemStrings = { R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location };
-    protected int[] itemdrawables = { R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
-            R.drawable.ease_chat_location_selector };
-    protected int[] itemIds = { ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION };
+//    protected int[] itemStrings = { R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location };
+//    protected int[] itemdrawables = { R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
+//            R.drawable.ease_chat_location_selector };
+//    protected int[] itemIds = { ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION };
+
+
+    protected int[] itemStrings = {};
+    protected int[] itemdrawables = { };
+    protected int[] itemIds = { };
+
+
     private boolean isMessageListInited;
     protected MyItemClickListener extendMenuItemClickListener;
     protected boolean isRoaming = false;
@@ -842,28 +849,8 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
         if(EaseAtMessageHelper.get().containsAtUsername(content)){
             sendAtMessage(content);
         }else{
-
-
-            //todo 本地测试自定义格式
-            //EMMessage message=createCustomSendMessage(content,toChatUsername);
-
             EMMessage message = EMMessage.createTxtSendMessage(content, toChatUsername);
             sendMessage(message);
-        }
-    }
-
-
-    //todo 自定义
-    public static EMMessage createCustomSendMessage(String var0, String var1) {
-        if (var0.length() > 0) {
-            EMMessage var2 = EMMessage.createSendMessage(EMMessage.Type.CUSTOM);
-            EMCustomMessageBody var3 = new EMCustomMessageBody(var0);
-            var2.addBody(var3);
-            var2.setTo(var1);
-            return var2;
-        } else {
-            EMLog.e("msg", "text content size must be greater than 0");
-            return null;
         }
     }
 

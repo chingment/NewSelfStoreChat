@@ -1,25 +1,20 @@
-package com.hyphenate.chatuidemo.fanju.ui;
+package com.hyphenate.easeui.fanju;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hyphenate.chatuidemo.R;
-import com.hyphenate.chatuidemo.fanju.model.ProductSkuBean;
+
+import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.fanju.model.ProductSkuBean;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProductSkuAdapter extends BaseAdapter {
@@ -60,7 +55,6 @@ public class ProductSkuAdapter extends BaseAdapter {
 
         final ImageView img_main =convertView.findViewById( R.id.img_main);
         TextView txt_name = convertView.findViewById( R.id.txt_name);
-
 
 
         txt_name.setText(item.getName());

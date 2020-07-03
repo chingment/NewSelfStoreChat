@@ -27,6 +27,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.EaseConstant;
+import com.hyphenate.easeui.fanju.FanjuChatCustomPresenter;
 import com.hyphenate.easeui.model.styles.EaseMessageListItemStyle;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.easeui.widget.EaseChatMessageList.MessageListItemClickListener;
@@ -39,7 +40,7 @@ import com.hyphenate.easeui.widget.presenter.EaseChatRowPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatTextPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatVideoPresenter;
 import com.hyphenate.easeui.widget.presenter.EaseChatVoicePresenter;
-import com.hyphenate.easeui.widget.presenter.UplinkChatOrderPresenter;
+
 
 public class EaseMessageAdapter extends BaseAdapter{
 
@@ -223,7 +224,7 @@ public class EaseMessageAdapter extends BaseAdapter{
 			return customRowProvider.getCustomChatRow(message, position, this);
 		}
 
-		//todo 本地更改聊天记录点击触发类型
+		//todo 本地->点击聊天记录触发的事件
 		EaseChatRowPresenter presenter = null;
 
 		EMMessage.Type messageType = message.getType();
@@ -252,7 +253,7 @@ public class EaseMessageAdapter extends BaseAdapter{
 				presenter = new EaseChatVideoPresenter();
 				break;
 			case CUSTOM:
-				presenter = new UplinkChatOrderPresenter();
+				presenter = new FanjuChatCustomPresenter();
 				break;
 			default:
 				break;

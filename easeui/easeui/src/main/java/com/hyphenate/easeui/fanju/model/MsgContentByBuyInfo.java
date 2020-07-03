@@ -1,4 +1,4 @@
-package com.hyphenate.chatuidemo.fanju.model;
+package com.hyphenate.easeui.fanju.model;
 
 import java.util.List;
 

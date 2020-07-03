@@ -1,4 +1,4 @@
-package com.hyphenate.chatuidemo.fanju.model;
+package com.hyphenate.easeui.fanju.model;
 
 public class ProductSkuBean {
     private String id;

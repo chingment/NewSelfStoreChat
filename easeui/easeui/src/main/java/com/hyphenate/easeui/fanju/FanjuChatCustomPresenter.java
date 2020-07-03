@@ -1,4 +1,4 @@
-package com.hyphenate.easeui.widget.presenter;
+package com.hyphenate.easeui.fanju;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +9,16 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.model.EaseDingMessageHelper;
 import com.hyphenate.easeui.ui.EaseDingAckUserListActivity;
 import com.hyphenate.easeui.widget.chatrow.EaseChatRow;
-import com.hyphenate.easeui.widget.chatrow.EaseChatRowText;
+import com.hyphenate.easeui.widget.presenter.EaseChatRowPresenter;
 import com.hyphenate.exceptions.HyphenateException;
 
-public class UplinkChatOrderPresenter extends EaseChatRowPresenter {
+public class FanjuChatCustomPresenter extends EaseChatRowPresenter {
 
     private static final String TAG = "UplinkChatOrderPresenter";
 
     @Override
     protected EaseChatRow onCreateChatRow(Context cxt, EMMessage message, int position, BaseAdapter adapter) {
-        return new UplinkChatRowOrder(cxt, message, position, adapter);
+        return new FanjuChatRowCustom(cxt, message, position, adapter);
     }
 
     @Override

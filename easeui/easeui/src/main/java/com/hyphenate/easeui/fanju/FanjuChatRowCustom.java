@@ -6,20 +6,23 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.hyphenate.chat.EMCustomMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.easeui.R;
+import com.hyphenate.easeui.fanju.model.MsgContentByBuyInfo;
 import com.hyphenate.easeui.model.EaseDingMessageHelper;
 import com.hyphenate.easeui.utils.EaseSmileUtils;
 import com.hyphenate.easeui.widget.chatrow.EaseChatRow;
 
 import java.util.List;
 
-public class UplinkChatRowOrder extends EaseChatRow{
+public class FanjuChatRowCustom extends EaseChatRow{
 
     private TextView contentView;
 
-    public UplinkChatRowOrder(Context context, EMMessage message, int position, BaseAdapter adapter) {
+    public FanjuChatRowCustom(Context context, EMMessage message, int position, BaseAdapter adapter) {
         super(context, message, position, adapter);
     }
 
@@ -37,11 +40,29 @@ public class UplinkChatRowOrder extends EaseChatRow{
     @Override
     public void onSetUpView() {
         //todo 本地
+
+
         EMCustomMessageBody txtBody = (EMCustomMessageBody) message.getBody();
 
-        //EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
+        String txt=null;
+        if(txtBody.getParams()!=null) {
+            String type = txtBody.getParams().get("type");
+            String content = txtBody.getParams().get("content");
 
-        Spannable span = EaseSmileUtils.getSmiledText(context, "测试");
+            if(type.equals("buyinfo")){
+                MsgContentByBuyInfo rt = JSON.parseObject(content, new TypeReference<MsgContentByBuyInfo>() {
+
+                });
+
+                txt=rt.getHandleDescribe();
+            }
+        }
+
+        if(txt==null)
+            txt="";
+
+
+        Spannable span = EaseSmileUtils.getSmiledText(context, txt);
         // 设置内容
         contentView.setText(span, TextView.BufferType.SPANNABLE);
     }
