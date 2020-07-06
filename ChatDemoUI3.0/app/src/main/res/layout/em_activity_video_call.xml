@@ -59,6 +59,7 @@
                 android:id="@+id/call_tv_is_p2p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:textColor="#fff" />
 
             <TextView

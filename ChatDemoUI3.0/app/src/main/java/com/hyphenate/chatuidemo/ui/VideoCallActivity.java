@@ -84,6 +84,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
     private TextView call_tv_nickname;
     private TextView call_tv_networkstatus;
     private Chronometer call_chm_tick;
+    private TextView call_tv_is_p2p;
 
     private Button call_btn_hangup;
     private LinearLayout call_coming_ll;
@@ -136,6 +137,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
         call_tv_monitor = (TextView) findViewById(R.id.call_tv_monitor);
         call_tv_nickname = (TextView) findViewById(R.id.call_tv_nickname);
         call_tv_networkstatus = (TextView) findViewById(R.id.call_tv_networkstatus);
+        call_tv_is_p2p=(TextView)findViewById(R.id.call_tv_is_p2p);
+
 
         call_btn_hangup = (Button) findViewById(R.id.call_btn_hangup);
         call_btn_hangup.setOnClickListener(this);
@@ -321,8 +324,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                             } catch (Exception e) {
                             }
                             openSpeakerOn();
-                            ((TextView)findViewById(R.id.call_tv_is_p2p)).setText(EMClient.getInstance().callManager().isDirectCall()
-                                    ? R.string.direct_call : R.string.relay_call);
+                            call_tv_is_p2p.setText(EMClient.getInstance().callManager().isDirectCall() ? R.string.direct_call : R.string.relay_call);
                             iv_handsfree.setImageResource(R.drawable.em_icon_speaker_on);
                             isHandsfreeState = true;
                             isInCalling = true;
@@ -344,8 +346,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                 case NETWORK_DISCONNECTED:
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            call_tv_networkstatus.setVisibility(View.VISIBLE);
-                            call_tv_networkstatus.setText(R.string.network_unavailable);
+                            //call_tv_networkstatus.setVisibility(View.VISIBLE);
+                            //call_tv_networkstatus.setText(R.string.network_unavailable);
                         }
                     });
                     break;
@@ -733,7 +735,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                                     + "\nRemoteBitrate：" + callHelper.getRemoteBitrate()
                                     + "\n" + recordString);
 
-                            ((TextView)findViewById(R.id.call_tv_is_p2p)).setText(EMClient.getInstance().callManager().isDirectCall()
+                            call_tv_is_p2p.setText(EMClient.getInstance().callManager().isDirectCall()
                                     ? R.string.direct_call : R.string.relay_call);
                         }
                     });
