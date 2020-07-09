@@ -211,7 +211,7 @@ public class MainActivity extends BaseActivity {
 		mTabs = new Button[3];
 		mTabs[0] = (Button) findViewById(R.id.btn_conversation);
 		mTabs[1] = (Button) findViewById(R.id.btn_address_list);
-		mTabs[2] = (Button) findViewById(R.id.btn_setting);
+		mTabs[2] = (Button) findViewById(R.id.btn_my);
 		// select first tab
 		mTabs[0].setSelected(true);
 	}
@@ -229,7 +229,7 @@ public class MainActivity extends BaseActivity {
 		case R.id.btn_address_list:
 			index = 1;
 			break;
-		case R.id.btn_setting:
+		case R.id.btn_my:
 			index = 2;
 			break;
 		}

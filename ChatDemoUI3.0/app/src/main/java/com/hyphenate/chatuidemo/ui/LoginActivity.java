@@ -168,6 +168,8 @@ public class LoginActivity extends BaseActivity {
 			    EMClient.getInstance().groupManager().loadAllGroups();
 			    EMClient.getInstance().chatManager().loadAllConversations();
 
+				DemoApplication.currentUserNick="邱小文";
+
 			    // update current user's display name for APNs
 				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(
 						DemoApplication.currentUserNick.trim());

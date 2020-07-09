@@ -98,6 +98,7 @@
             android:orientation="horizontal" >
 
             <Button
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
@@ -115,8 +116,6 @@
             <Button
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:layout_marginRight="10dip"
                 android:layout_weight="1"
                 android:background="@drawable/em_button_login_bg"
                 android:gravity="center"

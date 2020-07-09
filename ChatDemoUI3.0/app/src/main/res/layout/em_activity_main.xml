@@ -81,17 +81,17 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/btn_container_setting"
+            android:id="@+id/btn_container_my"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1" >
 
             <Button
-                android:id="@+id/btn_setting"
+                android:id="@+id/btn_my"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/em_main_bottom_item_bg"
-                android:drawableTop="@drawable/em_tab_setting_bg"
+                android:drawableTop="@drawable/em_tab_my_bg"
                 android:onClick="onTabClicked"
                 android:paddingBottom="2dip"
                 android:paddingTop="7dip"
