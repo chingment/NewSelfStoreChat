@@ -208,8 +208,7 @@ public class LoginActivity extends BaseActivity {
 							UserCacheManager.save(currentUsername, data.getNickName(), data.getAvatar());
 
 							// update current user's display name for APNs
-							boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(
-									DemoApplication.currentUserNick.trim());
+							boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(data.getNickName());
 							if (!updatenick) {
 								Log.e("LoginActivity", "update current user nick fail");
 							}
