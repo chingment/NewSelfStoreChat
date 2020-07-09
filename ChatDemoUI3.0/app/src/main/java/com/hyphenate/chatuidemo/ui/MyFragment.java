@@ -17,8 +17,12 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
+import com.hyphenate.chatuidemo.cache.UserCacheInfo;
+import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 public class MyFragment  extends Fragment implements View.OnClickListener {
 
@@ -44,8 +48,25 @@ public class MyFragment  extends Fragment implements View.OnClickListener {
 
         String currentUserName=EMClient.getInstance().getCurrentUser();
         tvUsername.setText(currentUserName);
-        EaseUserUtils.setUserNick(currentUserName, tvNickName);
-        EaseUserUtils.setUserAvatar(this.getContext(), currentUserName, headAvatar);
+
+        UserCacheInfo  userCacheInfo= UserCacheManager.get(currentUserName);
+        if(userCacheInfo!=null){
+            tvNickName.setText(userCacheInfo.getNickName());
+
+            Picasso.with(this.getContext()).load(userCacheInfo.getAvatar())
+                    .placeholder(com.hyphenate.easeui.R.drawable.fanju_default_image).fit().centerInside()
+                    .into(headAvatar, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            headAvatar.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            headAvatar.setBackgroundResource(com.hyphenate.easeui.R.drawable.fanju_default_image);
+                        }
+                    });
+        }
     }
 
     @Override

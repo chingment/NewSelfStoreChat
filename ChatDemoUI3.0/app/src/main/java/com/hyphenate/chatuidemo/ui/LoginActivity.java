@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -32,15 +33,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chatuidemo.BuildConfig;
 import com.hyphenate.chatuidemo.DemoApplication;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
+import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.chatuidemo.db.DemoDBManager;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpClient;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpResponseHandler;
+import com.hyphenate.chatuidemo.fanju.model.ApiResultBean;
+import com.hyphenate.chatuidemo.fanju.model.OpUserInfoBean;
+import com.hyphenate.chatuidemo.fanju.model.Result;
+import com.hyphenate.chatuidemo.fanju.own.Config;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Login screen
@@ -155,62 +171,106 @@ public class LoginActivity extends BaseActivity {
         DemoHelper.getInstance().setCurrentUserName(currentUsername);
 
 		final long start = System.currentTimeMillis();
-		// call login method
-		Log.d(TAG, "EMClient.getInstance().login");
-		EMClient.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("userName", currentUsername);
+		params.put("password", currentPassword);
+		params.put("appId", BuildConfig.APPLICATION_ID);
+
+		HttpClient.postByAppSecret(BuildConfig.APPKEY, BuildConfig.APPSECRET, Config.URL.own_LoginByAccount, params, null, new HttpResponseHandler() {
 
 			@Override
-			public void onSuccess() {
-				Log.d(TAG, "login: onSuccess");
+			public void onBeforeSend() {
 
-
-				// ** manually load all local groups and conversation
-			    EMClient.getInstance().groupManager().loadAllGroups();
-			    EMClient.getInstance().chatManager().loadAllConversations();
-
-				DemoApplication.currentUserNick="邱小文";
-
-			    // update current user's display name for APNs
-				boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(
-						DemoApplication.currentUserNick.trim());
-				if (!updatenick) {
-					Log.e("LoginActivity", "update current user nick fail");
-				}
-
-				if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
-				    pd.dismiss();
-				}
-
-				// get user's info (this should be get from App's server or 3rd party service)
-				DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-
-				Intent intent = new Intent(LoginActivity.this,
-						MainActivity.class);
-				startActivity(intent);
-
-				finish();
 			}
 
 			@Override
-			public void onProgress(int progress, String status) {
-				Log.d(TAG, "login: onProgress");
-			}
+			public void onSuccess(String response) {
 
-			@Override
-			public void onError(final int code, final String message) {
-				Log.d(TAG, "login: onError: " + code);
-				if (!progressShow) {
-					return;
-				}
-				runOnUiThread(new Runnable() {
-					public void run() {
-						pd.dismiss();
-						Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
-								Toast.LENGTH_SHORT).show();
-					}
+				ApiResultBean<OpUserInfoBean> rt = JSON.parseObject(response, new TypeReference<ApiResultBean<OpUserInfoBean>>() {
 				});
+
+				if(rt.getResult()== Result.SUCCESS){
+					OpUserInfoBean data=rt.getData();
+					// call login method
+					Log.d(TAG, "EMClient.getInstance().login");
+					EMClient.getInstance().login(data.getImUserName(), data.getImPassword(), new EMCallBack() {
+
+						@Override
+						public void onSuccess() {
+							Log.d(TAG, "EMClient->login: onSuccess");
+
+
+							// ** manually load all local groups and conversation
+							EMClient.getInstance().groupManager().loadAllGroups();
+							EMClient.getInstance().chatManager().loadAllConversations();
+
+							UserCacheManager.save(currentUsername, data.getNickName(), data.getAvatar());
+
+							// update current user's display name for APNs
+							boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(
+									DemoApplication.currentUserNick.trim());
+							if (!updatenick) {
+								Log.e("LoginActivity", "update current user nick fail");
+							}
+
+							if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
+								pd.dismiss();
+							}
+
+							// get user's info (this should be get from App's server or 3rd party service)
+							DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+
+							Intent intent = new Intent(LoginActivity.this,
+									MainActivity.class);
+							startActivity(intent);
+
+							finish();
+						}
+
+						@Override
+						public void onProgress(int progress, String status) {
+							Log.d(TAG, "EMClient->login: onProgress");
+						}
+
+						@Override
+						public void onError(final int code, final String message) {
+							Log.d(TAG, "EMClient->login: onError: " + code);
+							if (!progressShow) {
+								return;
+							}
+							runOnUiThread(new Runnable() {
+								public void run() {
+									pd.dismiss();
+									Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
+											Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
+					});
+				}
+				else {
+					Log.d(TAG, "fanju->login: failure");
+					if (!progressShow) {
+						return;
+					}
+					runOnUiThread(new Runnable() {
+						public void run() {
+							pd.dismiss();
+							Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + rt.getMessage(),
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+
+			}
+
+			@Override
+			public void onFailure(String msg, Exception e) {
+				pd.dismiss();
 			}
 		});
+
 	}
 
 	/**

@@ -20,7 +20,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "Boolean", "ISAPPDEBUG", "true"
+            buildConfigField "String", "ENVIRONMENT", "\"http://api.svcchat.17fanju.com\""
+            buildConfigField "String", "APPKEY", "\"test\""
+            buildConfigField "String", "APPSECRET", "\"6ZB97cdVz211O08EKZ6yriAYrHXFBowC\""
+        }
         release {
+            buildConfigField "Boolean", "ISAPPDEBUG", "true"
+            buildConfigField "String", "ENVIRONMENT", "\"http://api.svcchat.17fanju.com\""
+            buildConfigField "String", "APPKEY", "\"fanju\""
+            buildConfigField "String", "APPSECRET", "\"7460e6512f1940f68c00fe1fdb2b7eb1\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
@@ -64,6 +74,9 @@ dependencies {
     implementation 'com.huawei.hms:push:4.0.2.300'
     implementation 'com.alibaba:fastjson:1.2.46'
     implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.j256.ormlite:ormlite-android:5.0'
+    implementation 'com.google.code.gson:gson:2.8.0'
 }
 
 // ADD THIS AT THE BOTTOM
