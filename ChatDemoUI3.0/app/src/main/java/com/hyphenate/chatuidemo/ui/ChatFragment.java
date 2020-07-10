@@ -25,6 +25,7 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chatuidemo.Constant;
+import com.hyphenate.chatuidemo.DemoApplication;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.DemoModel;
 import com.hyphenate.chatuidemo.R;
@@ -265,6 +266,10 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
 
     @Override
     public void onSetMessageAttributes(EMMessage message) {
+
+        message.setAttribute("userNickName", DemoApplication.currentUserNickName);
+        message.setAttribute("userAvatar",DemoApplication.currentUserAvatar);
+
         if(isRobot){
             //set message extension
             message.setAttribute("em_robot_message", isRobot);

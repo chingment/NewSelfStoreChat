@@ -39,8 +39,8 @@ public class DemoApplication extends Application {
 	/**
 	 * nickname for current user, the nickname instead of ID be shown when user receive notification from APNs
 	 */
-	public static String currentUserNick = "";
-
+	public static String currentUserNickName = "";
+	public static String currentUserAvatar = "";
 	@Override
 	public void onCreate() {
 		MultiDex.install(this);

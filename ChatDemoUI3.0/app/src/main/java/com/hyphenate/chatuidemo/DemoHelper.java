@@ -36,7 +36,6 @@ import com.hyphenate.chat.EMMucSharedFile;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMStreamStatistics;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.chatuidemo.conference.ConferenceActivity;
 import com.hyphenate.chatuidemo.conference.LiveActivity;
 import com.hyphenate.chatuidemo.db.DemoDBManager;
@@ -46,6 +45,7 @@ import com.hyphenate.chatuidemo.domain.EmojiconExampleGroupData;
 import com.hyphenate.chatuidemo.domain.InviteMessage;
 import com.hyphenate.chatuidemo.domain.InviteMessage.InviteMessageStatus;
 import com.hyphenate.chatuidemo.domain.RobotUser;
+import com.hyphenate.chatuidemo.fanju.utils.StringUtil;
 import com.hyphenate.chatuidemo.parse.UserProfileManager;
 import com.hyphenate.chatuidemo.receiver.CallReceiver;
 import com.hyphenate.chatuidemo.receiver.HeadsetReceiver;
@@ -1313,20 +1313,53 @@ public class DemoHelper {
 	private EaseUser getUserInfo(String username){
 		// To get instance of EaseUser, here we get it from the user list in memory
 		// You'd better cache it if you get it from your server
+//        EaseUser user = null;
+//        if(username.equals(EMClient.getInstance().getCurrentUser()))
+//            return getUserProfileManager().getCurrentUserInfo();
+//        user = getContactList().get(username);
+//        if(user == null && getRobotList() != null){
+//            user = getRobotList().get(username);
+//        }
+//
+//        // if user is not in your contacts, set inital letter for him/her
+//        if(user == null){
+//            user = new EaseUser(username);
+//            EaseCommonUtils.setUserInitialLetter(user);
+//        }
+//        return user;
+
+
+
+        //获取user信息，demo是从内存的好友列表里获取，
+        //实际开发中，可能还需要从服务器获取用户信息,
+        //从服务器获取的数据，最好缓存起来，避免频繁的网络请求
         EaseUser user = null;
-        if(username.equals(EMClient.getInstance().getCurrentUser()))
-            return getUserProfileManager().getCurrentUserInfo();
-        user = getContactList().get(username);
-        if(user == null && getRobotList() != null){
-            user = getRobotList().get(username);
+        //设置自己的头像
+        if(username.equals(EMClient.getInstance().getCurrentUser())){
+            user=new EaseUser(username);
+            user.setNickname(DemoApplication.currentUserNickName);
+            user.setAvatar(DemoApplication.currentUserAvatar);
+            return user;
+        }else {
+//设置别人的头像
+            if (contactList != null && contactList.containsKey(username)) {
+
+            } else { // 如果内存中没有，则将本地数据库中的取出到内存中。
+                getContactList();
+            }
+            user = getContactList().get(username);
+            if(user == null){
+                user = new EaseUser(username);
+            } else {
+                if(StringUtil.isEmpty(user.getNickname())){ // 如果名字为空，则显示环信号码
+                    user.setNickname(user.getUsername());
+                }
+            }
+            return user;
         }
 
-        // if user is not in your contacts, set inital letter for him/her
-        if(user == null){
-            user = new EaseUser(username);
-            EaseCommonUtils.setUserInitialLetter(user);
-        }
-        return user;
+
+
 	}
 	
 	 /**
@@ -1343,9 +1376,25 @@ public class DemoHelper {
                     EMLog.d(TAG, "onMessageReceived: " + message.getType());
                     EMLog.d(TAG, "onMessageReceived from: " + message.getFrom());
 
-                    String userName=message.getFrom();
+                    String userName= message.getFrom();
+                    String userNickName=message.getStringAttribute("userNickName","");
+                    String userAvatar=message.getStringAttribute("userAvatar","");
 
-                    UserCacheManager.get(userName);
+
+                    EaseUser easeUser = new EaseUser(userName);
+                    easeUser.setNickname(userNickName);
+                    easeUser.setAvatar(userAvatar);
+
+                    getContactList();
+                    contactList.put(userName, easeUser);
+                    UserDao dao = new UserDao(DemoApplication.getInstance());
+                    List<EaseUser> users = new ArrayList<>();
+                    users.add(easeUser);
+                    dao.saveContactList(users);
+                    getModel().setContactSynced(true);
+                    // 通知listeners联系人同步完毕
+                    notifyContactsSyncListener(true);
+
 
                     // 判断一下是否是会议邀请
                     String confId = message.getStringAttribute(Constant.MSG_ATTR_CONF_ID, "");

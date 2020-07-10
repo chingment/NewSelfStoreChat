@@ -41,7 +41,6 @@ import com.hyphenate.chatuidemo.BuildConfig;
 import com.hyphenate.chatuidemo.DemoApplication;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
-import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.chatuidemo.db.DemoDBManager;
 import com.hyphenate.chatuidemo.fanju.http.http.HttpClient;
 import com.hyphenate.chatuidemo.fanju.http.http.HttpResponseHandler;
@@ -201,11 +200,13 @@ public class LoginActivity extends BaseActivity {
 							Log.d(TAG, "EMClient->login: onSuccess");
 
 
+							DemoApplication.currentUserNickName=data.getNickName();
+							DemoApplication.currentUserAvatar=data.getAvatar();
+
 							// ** manually load all local groups and conversation
 							EMClient.getInstance().groupManager().loadAllGroups();
 							EMClient.getInstance().chatManager().loadAllConversations();
 
-							UserCacheManager.save(currentUsername, data.getNickName(), data.getAvatar());
 
 							// update current user's display name for APNs
 							boolean updatenick = EMClient.getInstance().pushManager().updatePushNickname(data.getNickName());

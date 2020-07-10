@@ -17,8 +17,6 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
-import com.hyphenate.chatuidemo.cache.UserCacheInfo;
-import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 import com.squareup.picasso.Callback;
@@ -43,30 +41,18 @@ public class MyFragment  extends Fragment implements View.OnClickListener {
         headAvatar = (ImageView) getView().findViewById(R.id.user_head_avatar);
         tvUsername = (TextView) getView().findViewById(R.id.user_username);
         tvNickName = (TextView) getView().findViewById(R.id.user_nickname);
-        logoutBtn= (Button) getView().findViewById(R.id.btn_logout);
+        logoutBtn = (Button) getView().findViewById(R.id.btn_logout);
         logoutBtn.setOnClickListener(this);
 
-        String currentUserName=EMClient.getInstance().getCurrentUser();
+        String currentUserName = EMClient.getInstance().getCurrentUser();
         tvUsername.setText(currentUserName);
 
-        UserCacheInfo  userCacheInfo= UserCacheManager.get(currentUserName);
-        if(userCacheInfo!=null){
-            tvNickName.setText(userCacheInfo.getNickName());
 
-            Picasso.with(this.getContext()).load(userCacheInfo.getAvatar())
-                    .placeholder(com.hyphenate.easeui.R.drawable.fanju_default_image).fit().centerInside()
-                    .into(headAvatar, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            headAvatar.setVisibility(View.VISIBLE);
-                        }
+        tvUsername.setText(EMClient.getInstance().getCurrentUser());
+        EaseUserUtils.setUserNick(currentUserName, tvNickName);
+        EaseUserUtils.setUserAvatar(getContext(), currentUserName, headAvatar);
 
-                        @Override
-                        public void onError() {
-                            headAvatar.setBackgroundResource(com.hyphenate.easeui.R.drawable.fanju_default_image);
-                        }
-                    });
-        }
+
     }
 
     @Override
