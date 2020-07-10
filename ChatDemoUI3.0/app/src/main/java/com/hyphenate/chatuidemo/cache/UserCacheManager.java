@@ -2,9 +2,19 @@ package com.hyphenate.chatuidemo.cache;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chatuidemo.BuildConfig;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpClient;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpResponseHandler;
+import com.hyphenate.chatuidemo.fanju.model.ApiResultBean;
+import com.hyphenate.chatuidemo.fanju.model.OpUserInfoBean;
+import com.hyphenate.chatuidemo.fanju.model.Result;
+import com.hyphenate.chatuidemo.fanju.model.UserInfoBean;
+import com.hyphenate.chatuidemo.fanju.own.Config;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.j256.ormlite.dao.Dao;
 
@@ -44,28 +54,41 @@ public class UserCacheManager {
 
     /**
      * 获取用户信息
-     * @param userId 用户环信ID
+     * @param userName 用户环信ID
      * @return
      */
-    public static UserCacheInfo get(final String userId){
+    public static UserCacheInfo get(final String userName){
         UserCacheInfo info = null;
 
         // 如果本地缓存不存在或者过期，则从存储服务器获取
-        if (notExistedOrExpired(userId)){
-//            UserWebManager.getUserInfoAync(userId, new UserWebManager.UserCallback() {
-//                @Override
-//                public void onCompleted(UserWebInfo info) {
-//                    if(info == null) return;
-//
-//                    // 缓存到本地
-//                    // info.getOpenId() 为该用户的【环信ID】
-//                    save(info.getOpenId(), info.getNickName(),info.getAvatarUrl());
-//                }
-//            });
+        if (notExistedOrExpired(userName)){
+
+            Map<String, String> params = new HashMap<>();
+            params.put("userName", userName);
+
+            HttpClient.getByAppSecret(BuildConfig.APPKEY, BuildConfig.APPSECRET, Config.URL.user_GetInfoByUserName, params, new HttpResponseHandler() {
+                        @Override
+                        public void onSuccess(String response) {
+
+
+                            ApiResultBean<UserInfoBean> rt = JSON.parseObject(response, new TypeReference<ApiResultBean<UserInfoBean>>() {
+                            });
+
+                            if(rt.getResult()== Result.SUCCESS){
+
+                                UserInfoBean data=rt.getData();
+                                save(userName,data.getNickName(),data.getAvatar());
+                            }
+                        }
+                    }
+            );
+
+
+
         }
 
         // 从本地缓存中获取用户数据
-        info = getFromCache(userId);
+        info = getFromCache(userName);
 
         return info;
     }
@@ -124,14 +147,14 @@ public class UserCacheManager {
 
     /**
      * 用户不存在或已过期
-     * @param userId 用户环信ID
+     * @param userName 用户环信ID
      * @return
      */
-    public static boolean notExistedOrExpired(String userId){
+    public static boolean notExistedOrExpired(String userName){
         Dao<UserCacheInfo, Integer> dao = SqliteHelper.getInstance().getUserDao();
         try {
             long count = dao.queryBuilder().where()
-                    .eq("userId", userId).and()
+                    .eq("userName", userName).and()
                     .gt("expiredDate",new Date().getTime())
                     .countOf();
             return count <= 0;

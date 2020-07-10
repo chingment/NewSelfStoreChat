@@ -26,6 +26,7 @@ public class Config {
 
     public class URL {
         public static final String own_LoginByAccount= BuildConfig.ENVIRONMENT + "/api/Own/LoginByAccount";
+        public static final String user_GetInfoByUserName= BuildConfig.ENVIRONMENT + "/api/User/GetInfoByUserName";
     }
 }
 

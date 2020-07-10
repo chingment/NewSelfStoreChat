@@ -36,6 +36,7 @@ import com.hyphenate.chat.EMMucSharedFile;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMStreamStatistics;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.hyphenate.chatuidemo.cache.UserCacheManager;
 import com.hyphenate.chatuidemo.conference.ConferenceActivity;
 import com.hyphenate.chatuidemo.conference.LiveActivity;
 import com.hyphenate.chatuidemo.db.DemoDBManager;
@@ -53,6 +54,7 @@ import com.hyphenate.chatuidemo.ui.MainActivity;
 import com.hyphenate.chatuidemo.ui.VideoCallActivity;
 import com.hyphenate.chatuidemo.ui.VoiceCallActivity;
 import com.hyphenate.chatuidemo.utils.PreferenceManager;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.EaseUI;
 import com.hyphenate.easeui.EaseUI.EaseEmojiconInfoProvider;
 import com.hyphenate.easeui.EaseUI.EaseSettingsProvider;
@@ -1339,6 +1341,12 @@ public class DemoHelper {
 			    for (EMMessage message : messages) {
                     EMLog.d(TAG, "onMessageReceived id : " + message.getMsgId());
                     EMLog.d(TAG, "onMessageReceived: " + message.getType());
+                    EMLog.d(TAG, "onMessageReceived from: " + message.getFrom());
+
+                    String userName=message.getFrom();
+
+                    UserCacheManager.get(userName);
+
                     // 判断一下是否是会议邀请
                     String confId = message.getStringAttribute(Constant.MSG_ATTR_CONF_ID, "");
                     if(!"".equals(confId)){
@@ -1347,9 +1355,11 @@ public class DemoHelper {
                         goConference(confId, password, extension);
                     }
                     // in background, do not refresh UI, notify it in notification bar
-                    if(!easeUI.hasForegroundActivies()){
+                    if(!easeUI.hasForegroundActivies()) {
                         getNotifier().notify(message);
                     }
+
+
                 }
 			}
 			
