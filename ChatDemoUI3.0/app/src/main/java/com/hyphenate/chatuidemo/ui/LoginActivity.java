@@ -48,6 +48,7 @@ import com.hyphenate.chatuidemo.fanju.model.ApiResultBean;
 import com.hyphenate.chatuidemo.fanju.model.OpUserInfoBean;
 import com.hyphenate.chatuidemo.fanju.model.Result;
 import com.hyphenate.chatuidemo.fanju.own.Config;
+import com.hyphenate.chatuidemo.utils.PreferenceManager;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 
 import org.json.JSONException;
@@ -200,8 +201,8 @@ public class LoginActivity extends BaseActivity {
 							Log.d(TAG, "EMClient->login: onSuccess");
 
 
-							DemoApplication.currentUserNickName=data.getNickName();
-							DemoApplication.currentUserAvatar=data.getAvatar();
+							PreferenceManager.getInstance().setCurrentUserAvatar(data.getAvatar());
+							PreferenceManager.getInstance().setCurrentUserNick(data.getNickName());
 
 							// ** manually load all local groups and conversation
 							EMClient.getInstance().groupManager().loadAllGroups();
@@ -219,7 +220,7 @@ public class LoginActivity extends BaseActivity {
 							}
 
 							//todo 获取当前用户的好友关系
-							DemoHelper.getInstance().setContactList(null);
+							//DemoHelper.getInstance().setContactList(null);
 
 							// get user's info (this should be get from App's server or 3rd party service)
 							DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();

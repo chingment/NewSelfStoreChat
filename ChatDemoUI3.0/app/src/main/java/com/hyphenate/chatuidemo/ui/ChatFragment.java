@@ -267,8 +267,8 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
     @Override
     public void onSetMessageAttributes(EMMessage message) {
 
-        message.setAttribute("userNickName", DemoApplication.currentUserNickName);
-        message.setAttribute("userAvatar",DemoApplication.currentUserAvatar);
+        message.setAttribute("userNickName", PreferenceManager.getInstance().getCurrentUserNick());
+        message.setAttribute("userAvatar",PreferenceManager.getInstance().getCurrentUserAvatar());
 
         if(isRobot){
             //set message extension

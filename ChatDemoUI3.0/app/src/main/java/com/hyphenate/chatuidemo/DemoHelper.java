@@ -1337,8 +1337,8 @@ public class DemoHelper {
         //设置自己的头像
         if(username.equals(EMClient.getInstance().getCurrentUser())){
             user=new EaseUser(username);
-            user.setNickname(DemoApplication.currentUserNickName);
-            user.setAvatar(DemoApplication.currentUserAvatar);
+            user.setNickname(PreferenceManager.getInstance().getCurrentUserNick());
+            user.setAvatar(PreferenceManager.getInstance().getCurrentUserAvatar());
             return user;
         }else {
 //设置别人的头像
