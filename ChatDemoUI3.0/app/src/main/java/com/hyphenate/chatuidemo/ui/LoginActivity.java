@@ -218,6 +218,9 @@ public class LoginActivity extends BaseActivity {
 								pd.dismiss();
 							}
 
+							//todo 获取当前用户的好友关系
+							DemoHelper.getInstance().setContactList(null);
+
 							// get user's info (this should be get from App's server or 3rd party service)
 							DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 
