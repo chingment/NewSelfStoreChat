@@ -11,6 +11,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.heytap.mcssdk.PushManager;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConferenceListener;
@@ -45,6 +47,12 @@ import com.hyphenate.chatuidemo.domain.EmojiconExampleGroupData;
 import com.hyphenate.chatuidemo.domain.InviteMessage;
 import com.hyphenate.chatuidemo.domain.InviteMessage.InviteMessageStatus;
 import com.hyphenate.chatuidemo.domain.RobotUser;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpClient;
+import com.hyphenate.chatuidemo.fanju.http.http.HttpResponseHandler;
+import com.hyphenate.chatuidemo.fanju.model.ApiResultBean;
+import com.hyphenate.chatuidemo.fanju.model.ContactInfosResultBean;
+import com.hyphenate.chatuidemo.fanju.model.Result;
+import com.hyphenate.chatuidemo.fanju.own.Config;
 import com.hyphenate.chatuidemo.fanju.utils.StringUtil;
 import com.hyphenate.chatuidemo.parse.UserProfileManager;
 import com.hyphenate.chatuidemo.receiver.CallReceiver;
@@ -73,6 +81,7 @@ import com.hyphenate.push.EMPushHelper;
 import com.hyphenate.push.EMPushType;
 import com.hyphenate.util.EMLog;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1739,31 +1748,31 @@ public class DemoHelper {
        }
    }
    
-   public void asyncFetchContactsFromServer(final EMValueCallBack<List<String>> callback){
-       if(isSyncingContactsWithServer){
+   public void asyncFetchContactsFromServer(final EMValueCallBack<List<String>> callback) {
+       if (isSyncingContactsWithServer) {
            return;
        }
-       
+
        isSyncingContactsWithServer = true;
-       
-       new Thread(){
+
+       new Thread() {
            @Override
-           public void run(){
+           public void run() {
                List<String> usernames = null;
                List<String> selfIds = null;
                try {
                    usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
                    selfIds = EMClient.getInstance().contactManager().getSelfIdsOnOtherPlatform();
                    // in case that logout already before server returns, we should return immediately
-                   if(!isLoggedIn()){
+                   if (!isLoggedIn()) {
                        isContactsSyncedWithServer = false;
                        isSyncingContactsWithServer = false;
                        notifyContactsSyncListener(false);
                        return;
                    }
-                  if (selfIds.size() > 0) {
-                      usernames.addAll(selfIds);
-                  }
+                   if (selfIds.size() > 0) {
+                       usernames.addAll(selfIds);
+                   }
                    Map<String, EaseUser> userlist = new HashMap<String, EaseUser>();
                    for (String username : usernames) {
                        EaseUser user = new EaseUser(username);
@@ -1773,33 +1782,69 @@ public class DemoHelper {
                    // save the contact list to cache
                    getContactList().clear();
                    getContactList().putAll(userlist);
-                    // save the contact list to database
+                   // save the contact list to database
                    UserDao dao = new UserDao(appContext);
                    List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
                    dao.saveContactList(users);
 
                    demoModel.setContactSynced(true);
                    EMLog.d(TAG, "set contact syn status to true");
-                   
+
                    isContactsSyncedWithServer = true;
                    isSyncingContactsWithServer = false;
-                   
+
                    //notify sync success
                    notifyContactsSyncListener(true);
-                   
-                   getUserProfileManager().asyncFetchContactInfosFromServer(usernames,new EMValueCallBack<List<EaseUser>>() {
 
-                       @Override
-                       public void onSuccess(List<EaseUser> uList) {
-                           updateContactList(uList);
-                           getUserProfileManager().notifyContactInfosSyncListener(true);
-                       }
+                   Map<String, Object> params = new HashMap<>();
 
-                       @Override
-                       public void onError(int error, String errorMsg) {
-                       }
-                   });
-                   if(callback != null){
+                   JSONArray json_userNames = new JSONArray();
+
+
+                   for (String username : usernames) {
+                       json_userNames.put(username);
+                   }
+
+
+                   params.put("userNames", json_userNames);
+
+
+                   HttpClient.postByAppSecret(BuildConfig.APPKEY, BuildConfig.APPSECRET, Config.URL.own_GetContactInfos, params, null, new HttpResponseHandler() {
+                               @Override
+                               public void onSuccess(String response) {
+
+
+                                   ApiResultBean<ContactInfosResultBean> rt = JSON.parseObject(response, new TypeReference<ApiResultBean<ContactInfosResultBean>>() {
+                                   });
+
+                                   if(rt.getResult()== Result.SUCCESS) {
+                                       ContactInfosResultBean data=rt.getData();
+                                       if(data.getContacts()!=null&&data.getContacts().size()>0) {
+                                           updateContactList(data.getContacts());
+                                           getUserProfileManager().notifyContactInfosSyncListener(true);
+                                       }
+                                   }
+                               }
+                           }
+                   );
+
+
+//                   getUserProfileManager().asyncFetchContactInfosFromServer(usernames,new EMValueCallBack<List<EaseUser>>() {
+//
+//                       @Override
+//                       public void onSuccess(List<EaseUser> uList) {
+//
+//                           updateContactList(uList);
+//                           getUserProfileManager().notifyContactInfosSyncListener(true);
+//                       }
+//
+//                       @Override
+//                       public void onError(int error, String errorMsg) {
+//                       }
+//                   });
+
+
+                   if (callback != null) {
                        callback.onSuccess(usernames);
                    }
                } catch (HyphenateException e) {
@@ -1808,11 +1853,11 @@ public class DemoHelper {
                    isSyncingContactsWithServer = false;
                    notifyContactsSyncListener(false);
                    e.printStackTrace();
-                   if(callback != null){
+                   if (callback != null) {
                        callback.onError(e.getErrorCode(), e.toString());
                    }
                }
-               
+
            }
        }.start();
    }
