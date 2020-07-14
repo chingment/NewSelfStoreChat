@@ -19,6 +19,7 @@ import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseUserUtils;
+import com.hyphenate.easeui.widget.EaseAlertDialog;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -59,7 +60,15 @@ public class MyFragment  extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_logout:
-                logout();
+                new EaseAlertDialog(getActivity(),"提示", "确定退出？", null,new EaseAlertDialog.AlertDialogUser() {
+
+                    @Override
+                    public void onResult(boolean confirmed, Bundle bundle) {
+                        if(confirmed){
+                            logout();
+                        }
+                    }
+                }, true).show();
                 break;
         }
     }

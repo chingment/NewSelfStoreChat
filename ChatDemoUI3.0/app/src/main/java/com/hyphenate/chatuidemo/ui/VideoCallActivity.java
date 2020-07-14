@@ -48,6 +48,7 @@ import com.hyphenate.chatuidemo.DemoHelper;
 import com.hyphenate.chatuidemo.R;
 import com.hyphenate.chatuidemo.utils.PhoneStateManager;
 import com.hyphenate.chatuidemo.utils.PreferenceManager;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.fanju.ProductSkuAdapter;
 import com.hyphenate.easeui.fanju.model.CustomMsg;
 import com.hyphenate.easeui.fanju.model.ProductSkuBean;
@@ -657,6 +658,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                     public void onResult(boolean confirmed, Bundle bundle) {
                         if(confirmed){
                             if(customMsg_BuyInfo!=null) {
+                                customMsg_BuyInfo.setMessage("同意");
                                 customMsg_BuyInfo.getContent().setHandleStatus(1);
                                 customMsg_BuyInfo.getContent().setHandleDescribe("同意");
                                 sendCustomMessage(customMsg_BuyInfo, username);
@@ -676,6 +678,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
                     public void onResult(boolean confirmed, Bundle bundle) {
                         if(confirmed){
                             if(customMsg_BuyInfo!=null) {
+                                customMsg_BuyInfo.setMessage("不同意");
                                 customMsg_BuyInfo.getContent().setHandleStatus(2);
                                 customMsg_BuyInfo.getContent().setHandleDescribe("不同意");
                                 sendCustomMessage(customMsg_BuyInfo, username);
@@ -791,7 +794,12 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
             params.put("type",var0.getType());
             params.put("content",JSON.toJSONString(var0.getContent()));
 
+
             var3.setParams(params);
+
+            message.setAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_MESSAGE,var0.getMessage());
+            message.setAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_TYPE,var0.getType());
+            message.setAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_CONTENT,JSON.toJSONString(var0.getContent()));
 
             message.addBody(var3);
             message.setTo(var1);
