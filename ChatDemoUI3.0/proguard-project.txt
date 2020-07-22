@@ -92,4 +92,4 @@
 
 -dontwarn com.alibaba.fastjson.**
 -keep class com.alibaba.fastjson.**{*;}
--keep class com.hyphenate.chatuidemo.fanju.model.**{*;}
+-keep class com.hyphenate.chatuidemo.fanju.**{*;}

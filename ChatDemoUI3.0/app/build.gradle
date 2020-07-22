@@ -3,19 +3,42 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.huawei.agconnect'
 
+def static buildTime() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHH')
+    return formattedDate
+}
+
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
     defaultConfig {
-        applicationId "com.hyphenate.chatuidemo"
+        applicationId "com.uplink.svcchat"
         //测试oppo离线消息，需修改包名如下，如果配置了FCM推送，同时替换google-services.json 中的 package_name 字段
         //applicationId "com.hyphenate.chatuidemo.push"
         minSdkVersion 17
         targetSdkVersion 28
         multiDexEnabled true
+        versionCode 1
+        versionName "1.0.0.0"
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('/Users/chingment/Documents/github/NewSelfStoreChat/svcchat.jks')
+            storePassword 'ching003'
+            keyAlias 'svcchat'
+            keyPassword 'ching003'
+        }
+        config {
+            storeFile file('/Users/chingment/Documents/github/NewSelfStoreChat/svcchat.jks')
+            storePassword 'ching003'
+            keyAlias 'svcchat'
+            keyPassword 'ching003'
         }
     }
 
@@ -33,6 +56,22 @@ android {
             buildConfigField "String", "APPSECRET", "\"7460e6512f1940f68c00fe1fdb2b7eb1\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+
+                    def fileName
+
+                    if (variant.buildType.name.equals('release')) {//如果是release包
+                        fileName = "svcchat_release_v${defaultConfig.versionName}_t${buildTime()}.apk"
+                    } else if (variant.buildType.name.equals('debug')) {//如果是debug包
+                        fileName = "svcchat_debug_v${defaultConfig.versionName}_t${buildTime()}.apk"
+                    }
+                    outputFileName = fileName
+
+                }
+            }
+
         }
     }
 
