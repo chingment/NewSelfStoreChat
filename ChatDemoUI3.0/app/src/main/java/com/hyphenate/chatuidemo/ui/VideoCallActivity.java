@@ -120,6 +120,8 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
         	finish();
         	return;
         }
+
+
         setContentView(R.layout.em_activity_video_call);
 
         DemoHelper.getInstance().isVideoCalling = true;
@@ -696,6 +698,7 @@ public class VideoCallActivity extends CallActivity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
+        Log.e(TAG,"VIDEO onDestroy");
         DemoHelper.getInstance().isVideoCalling = false;
         stopMonitor();
         surface_sv_local.getRenderer().dispose();

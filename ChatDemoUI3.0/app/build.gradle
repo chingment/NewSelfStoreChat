@@ -14,7 +14,7 @@ android {
     buildToolsVersion '28.0.3'
 
     defaultConfig {
-        applicationId "com.uplink.svcchat"
+        applicationId "com.hyphenate.chatuidemo"
         //测试oppo离线消息，需修改包名如下，如果配置了FCM推送，同时替换google-services.json 中的 package_name 字段
         //applicationId "com.hyphenate.chatuidemo.push"
         minSdkVersion 17
@@ -22,19 +22,13 @@ android {
         multiDexEnabled true
         versionCode 1
         versionName "1.0.0.0"
-        ndk {
-            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86'
-        }
+//        ndk {
+//            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86'
+//        }
     }
 
     signingConfigs {
         release {
-            storeFile file('/Users/chingment/Documents/github/NewSelfStoreChat/svcchat.jks')
-            storePassword 'ching003'
-            keyAlias 'svcchat'
-            keyPassword 'ching003'
-        }
-        config {
             storeFile file('/Users/chingment/Documents/github/NewSelfStoreChat/svcchat.jks')
             storePassword 'ching003'
             keyAlias 'svcchat'
@@ -56,7 +50,7 @@ android {
             buildConfigField "String", "APPSECRET", "\"7460e6512f1940f68c00fe1fdb2b7eb1\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-
+            signingConfig signingConfigs.release
             applicationVariants.all { variant ->
                 variant.outputs.all {
 

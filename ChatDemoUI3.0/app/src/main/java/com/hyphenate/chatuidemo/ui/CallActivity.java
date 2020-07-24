@@ -74,7 +74,7 @@ public class CallActivity extends BaseActivity {
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
 
-       // audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
         pushProvider = new EMCallManager.EMCallPushProvider() {
             
