@@ -26,7 +26,11 @@ public class EaseUser extends EMContact {
 	 * avatar of the user
 	 */
 	protected String avatar;
-	
+
+	public EaseUser (){
+
+	}
+
 	public EaseUser(String username){
 	    this.username = username;
 	}
@@ -50,6 +54,10 @@ public class EaseUser extends EMContact {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
     @Override
 	public int hashCode() {

@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.hyphenate.chat.EMCustomMessageBody;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.easeui.EaseConstant;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.fanju.model.MsgContentByBuyInfo;
 import com.hyphenate.easeui.model.EaseDingMessageHelper;
@@ -44,25 +45,17 @@ public class FanjuChatRowCustom extends EaseChatRow{
 
         EMCustomMessageBody txtBody = (EMCustomMessageBody) message.getBody();
 
-        String txt=null;
-        if(txtBody.getParams()!=null) {
-            String type = txtBody.getParams().get("type");
-            String content = txtBody.getParams().get("content");
+        String msg_type = message.getStringAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_TYPE, "");
+        String msg_message = message.getStringAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_MESSAGE, "");
+        String msg_content = message.getStringAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_CONTENT, "");
 
-            if(type.equals("buyinfo")){
-                MsgContentByBuyInfo rt = JSON.parseObject(content, new TypeReference<MsgContentByBuyInfo>() {
 
-                });
-
-                txt=rt.getHandleDescribe();
-            }
+        if (msg_type.equals("buyinfo")) {
+            MsgContentByBuyInfo rt = JSON.parseObject(msg_content, new TypeReference<MsgContentByBuyInfo>() {
+            });
         }
 
-        if(txt==null)
-            txt="";
-
-
-        Spannable span = EaseSmileUtils.getSmiledText(context, txt);
+        Spannable span = EaseSmileUtils.getSmiledText(context, msg_message);
         // 设置内容
         contentView.setText(span, TextView.BufferType.SPANNABLE);
     }

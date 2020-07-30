@@ -81,46 +81,56 @@ public class EaseCommonUtils {
     public static String getMessageDigest(EMMessage message, Context context) {
         String digest = "";
         switch (message.getType()) {
-        case LOCATION:
-            if (message.direct() == EMMessage.Direct.RECEIVE) {
-                digest = getString(context, R.string.location_recv);
-                digest = String.format(digest, message.getFrom());
-                return digest;
-            } else {
-                digest = getString(context, R.string.location_prefix);
-            }
-            break;
-        case IMAGE:
-            digest = getString(context, R.string.picture);
-            break;
-        case VOICE:
-            digest = getString(context, R.string.voice_prefix);
-            break;
-        case VIDEO:
-            digest = getString(context, R.string.video);
-            break;
-        case TXT:
-            EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-            if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VOICE_CALL, false)){
-                digest = getString(context, R.string.voice_call) + txtBody.getMessage();
-            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VIDEO_CALL, false)){
-                digest = getString(context, R.string.video_call) + txtBody.getMessage();
-            }else if(message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
-                if(!TextUtils.isEmpty(txtBody.getMessage())){
-                    digest = txtBody.getMessage();
-                }else{
-                    digest = getString(context, R.string.dynamic_expression);
+            case LOCATION:
+                if (message.direct() == EMMessage.Direct.RECEIVE) {
+                    digest = getString(context, R.string.location_recv);
+                    digest = String.format(digest, message.getFrom());
+                    return digest;
+                } else {
+                    digest = getString(context, R.string.location_prefix);
                 }
-            }else{
-                digest = txtBody.getMessage();
-            }
-            break;
-        case FILE:
-            digest = getString(context, R.string.file);
-            break;
-        default:
-            EMLog.e(TAG, "error, unknow type");
-            return "";
+                break;
+            case IMAGE:
+                digest = getString(context, R.string.picture);
+                break;
+            case VOICE:
+                digest = getString(context, R.string.voice_prefix);
+                break;
+            case VIDEO:
+                digest = getString(context, R.string.video);
+                break;
+            case TXT:
+                EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
+                if (message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VOICE_CALL, false)) {
+                    digest = getString(context, R.string.voice_call) + txtBody.getMessage();
+                } else if (message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_VIDEO_CALL, false)) {
+                    digest = getString(context, R.string.video_call) + txtBody.getMessage();
+                } else if (message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)) {
+                    if (!TextUtils.isEmpty(txtBody.getMessage())) {
+                        digest = txtBody.getMessage();
+                    } else {
+                        digest = getString(context, R.string.dynamic_expression);
+                    }
+                } else {
+                    digest = txtBody.getMessage();
+                }
+                break;
+            case FILE:
+                digest = getString(context, R.string.file);
+                break;
+            case CUSTOM:
+                String custom_message_type = message.getStringAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_TYPE, "");
+                if(custom_message_type.equals("buyinfo")){
+                    digest ="[视频咨询]"+message.getStringAttribute(EaseConstant.CUSTON_MESSAGE_ATTR_MESSAGE, "");
+                }
+                else {
+                    digest="";
+                }
+
+                break;
+            default:
+                EMLog.e(TAG, "error, unknow type");
+                return "";
         }
 
         return digest;

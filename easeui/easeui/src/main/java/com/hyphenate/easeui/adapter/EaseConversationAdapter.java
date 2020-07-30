@@ -81,6 +81,7 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //todo 本地会话修改用户列表
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.ease_row_chat_history, parent, false);
         }
@@ -99,11 +100,13 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
         }
         holder.list_itease_layout.setBackgroundResource(R.drawable.ease_mm_listitem);
 
+
         // get conversation
         EMConversation conversation = getItem(position);
         // get username or group id
         String username = conversation.conversationId();
-        
+
+
         if (conversation.getType() == EMConversationType.GroupChat) {
             String groupId = conversation.conversationId();
             if(EaseAtMessageHelper.get().hasAtMeMsg(groupId)){
@@ -153,7 +156,8 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             if(cvsListHelper != null){
                 content = cvsListHelper.onSetItemSecondaryText(lastMessage);
             }
-            holder.message.setText(EaseSmileUtils.getSmiledText(getContext(), EaseCommonUtils.getMessageDigest(lastMessage, (this.getContext()))),
+            CharSequence message=EaseSmileUtils.getSmiledText(getContext(), EaseCommonUtils.getMessageDigest(lastMessage, (this.getContext())));
+            holder.message.setText(message,
                     BufferType.SPANNABLE);
             if(content != null){
                 holder.message.setText(content);
